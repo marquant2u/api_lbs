@@ -17,12 +17,14 @@ import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -44,6 +46,7 @@ public class SandwichRessource {
     @Inject
     SandwichManager sm;
     
+    /**
     @GET
     public Response getSandwichs() {
 //        JsonObject json = Json.createObjectBuilder()
@@ -54,6 +57,31 @@ public class SandwichRessource {
         GenericEntity<List<Sandwich>> liste = new GenericEntity<List<Sandwich>>(this.sm.findAll()) {
         };
         return Response.ok(liste).build();
+    } */
+    
+    @GET
+    public Response getSandwichs(
+            @QueryParam("t") String ptype,
+            @QueryParam("img") String img) {
+        GenericEntity<List<Sandwich>> liste = new GenericEntity<List<Sandwich>>(this.sm.findAll()) {
+        };
+        if(ptype != null){
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findByTypePain(ptype) ) {
+            };
+        }
+        if(img != null){
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findByImg(img) ) {
+            };
+        }
+        if(img != null){
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findByImg(img) ) {
+            };
+        }
+        if(img != null && ptype !=null){
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findByTypePainImg(img, ptype) ) {
+            };
+        }
+        return Response.ok(liste).build();
     }
     
     @GET
@@ -62,9 +90,10 @@ public class SandwichRessource {
         return Optional.ofNullable(sm.findById(id))
                 //.map(c -> Response.ok(categorie2Json(c)).build())
                 .map(c -> Response.ok(c).build())
-                //.orElseThrow(() -> new CategorieNotFound("Ressource non disponible "+ uriInfo.getPath()));
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+                .orElseThrow(() -> new CategorieNotFound("Ressource non disponible "+ uriInfo.getPath()));
+                //.orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
+    
     
     @POST
     public Response newSandwich(@Valid Sandwich s, @Context UriInfo uriInfo) {
@@ -109,6 +138,8 @@ public class SandwichRessource {
                 .add("id",s.getId())
                 .add("nom", s.getNom())
                 .add("desc", s.getDescription())
+                .add("type_pain", s.getType_pain())
+                .add("img", s.getImg())
                 .build();
     }
 }

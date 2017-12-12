@@ -52,8 +52,8 @@ public class CategorieResource {
         return Optional.ofNullable(cm.findById(id))
                 //.map(c -> Response.ok(categorie2Json(c)).build())
                 .map(c -> Response.ok(c).build())
-                //.orElseThrow(() -> new CategorieNotFound("Ressource non disponible "+ uriInfo.getPath()));
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+                .orElseThrow(() -> new CategorieNotFound("Ressource non disponible "+ uriInfo.getPath()));
+                //.orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
     
     @POST

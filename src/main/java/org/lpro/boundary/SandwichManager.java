@@ -63,5 +63,9 @@ public class SandwichManager {
         query.setParameter("tp", tp);
         return query.getResultList();
     }
+
+    Query createQuery(String select_s_FROM_Sandwich_stype_pain__type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
