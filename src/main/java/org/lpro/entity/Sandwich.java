@@ -1,9 +1,12 @@
 package org.lpro.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,9 +30,10 @@ public class Sandwich implements Serializable{
     private String type_pain;
     @NotNull
     private String img;
+    @ManyToMany
+    private Set<Categorie> categorie = new HashSet<Categorie>();
 
-    public Sandwich() {
-    }
+    public Sandwich(){ }
 
     public Sandwich(long id, String nom, String description, String type_pain, String img) {
         this.id = id;
@@ -37,6 +41,7 @@ public class Sandwich implements Serializable{
         this.description = description;
         this.type_pain = type_pain;
         this.img = img;
+        this.categorie = new HashSet<>();
     }
 
     public long getId() {
@@ -77,6 +82,14 @@ public class Sandwich implements Serializable{
     
     public void setImg(String img){
         this.img = img;
+    }
+    
+    public Set<Categorie> getCategorie(){
+        return this.categorie;
+    }
+    
+    public void setCategories(Set<Categorie> categ){
+        this.categorie = categ;
     }
     
 }
