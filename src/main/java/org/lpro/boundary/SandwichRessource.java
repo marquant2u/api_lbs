@@ -65,6 +65,10 @@ public class SandwichRessource {
             @DefaultValue("0") @QueryParam("img") String img,
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("size") int size){
+        if(page <=0)
+            page =1;
+        if(size <0)
+            size=1;
         GenericEntity<List<Sandwich>> liste = new GenericEntity<List<Sandwich>>(this.sm.findAll(page, size)) { };
         int aUneImage = Integer.parseInt(img); 
         if(ptype != null){

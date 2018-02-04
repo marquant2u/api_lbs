@@ -30,23 +30,39 @@ public class SandwichManager {
     public List<Sandwich> findAll(int numPage, int taillePage) {
         Query q = this.em.createNamedQuery("Sandwich.findAll", Sandwich.class);
         q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
-        q.setFirstResult((numPage-1) * taillePage);
-        q.setMaxResults(taillePage);
-        return q.getResultList();
-    }
-    
-    public List<Sandwich> findWithParams(int i, String tp, int numPage, int taillePage){
-        String qry = "SELECT s FROM Sandwich s";
-        if(i == 1) qry += " WHERE s.img != 'null'";
-        if (tp != null) qry += " WHERE s.type_pain ='"+tp+"'";
-        if (i==1 && tp != null) qry += " WHERE s.type_pain ='"+tp+"' AND s.img != 'null'";
-        Query query = this.em.createQuery(qry);
-        
-        query.setFirstResult((numPage-1) * taillePage);
-        query.setMaxResults(taillePage);
         
         Query nbElementsQuery = em.createQuery("SELECT count(s.id)from Sandwich s");
         int numDernierePage = (int)((numPage/taillePage)+1);
+        
+        int querySize = q.getResultList().size();
+        if (numPage > Math.ceil(querySize / (double) taillePage)) 
+            numPage = (int) Math.ceil(querySize / (double) taillePage);
+        
+        q.setFirstResult((numPage-1) * taillePage);
+        q.setMaxResults(taillePage);
+        
+        return q.getResultList();
+    }
+
+    
+    public List<Sandwich> findWithParams(int i, String tp, int numPage, int taillePage){
+        String qry = "SELECT s FROM Sandwich s";
+        
+        if(i == 1) qry += " WHERE s.img != 'null'";
+        if (tp != null) qry += " WHERE s.type_pain ='"+tp+"'";
+        if (i==1 && tp != null) qry += " WHERE s.type_pain ='"+tp+"' AND s.img != 'null'";
+        
+        Query query = this.em.createQuery(qry);
+        
+        Query nbElementsQuery = em.createQuery("SELECT count(s.id)from Sandwich s");
+        int numDernierePage = (int)((numPage/taillePage)+1);
+        
+        int querySize = query.getResultList().size();
+        if (numPage > Math.ceil(querySize / (double) taillePage)) 
+            numPage = (int) Math.ceil(querySize / (double) taillePage);
+        
+        query.setFirstResult((numPage-1) * taillePage);
+        query.setMaxResults(taillePage);
         
         return query.getResultList();
     }
