@@ -62,24 +62,19 @@ public class SandwichRessource {
     @GET
     public Response getSandwichs(
             @QueryParam("t") String ptype,
-            @QueryParam("img") String img) {
-        GenericEntity<List<Sandwich>> liste = new GenericEntity<List<Sandwich>>(this.sm.findAll()) {
-        };
+            @DefaultValue("0") @QueryParam("img") String img,
+            @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("size") int size){
+        GenericEntity<List<Sandwich>> liste = new GenericEntity<List<Sandwich>>(this.sm.findAll(page, size)) { };
+        int aUneImage = Integer.parseInt(img); 
         if(ptype != null){
-            liste = new GenericEntity<List<Sandwich>>(this.sm.findByTypePain(ptype) ) {
-            };
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findWithParams(0, ptype, page, size) ) { };
         }
-        if(img != null){
-            liste = new GenericEntity<List<Sandwich>>(this.sm.findByImg(img) ) {
-            };
+        if(aUneImage == 1){
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findWithParams(aUneImage, null, page, size) ) { };
         }
-        if(img != null){
-            liste = new GenericEntity<List<Sandwich>>(this.sm.findByImg(img) ) {
-            };
-        }
-        if(img != null && ptype !=null){
-            liste = new GenericEntity<List<Sandwich>>(this.sm.findByTypePainImg(img, ptype) ) {
-            };
+        if(aUneImage ==1 && ptype !=null){
+            liste = new GenericEntity<List<Sandwich>>(this.sm.findWithParams(aUneImage, ptype, page, size) ) { };
         }
         return Response.ok(liste).build();
     }
@@ -125,9 +120,9 @@ public class SandwichRessource {
         return json;
     }
     
-    private JsonArray getSandwichList() {
+    private JsonArray getSandwichList(int page, int size) {
         JsonArrayBuilder jab = Json.createArrayBuilder();
-        this.sm.findAll().forEach((s) -> {
+        this.sm.findAll(page, size).forEach((s) -> {
             jab.add(buildJson(s));
             });
         return jab.build();
@@ -142,4 +137,6 @@ public class SandwichRessource {
                 .add("img", s.getImg())
                 .build();
     }
+    
+    
 }

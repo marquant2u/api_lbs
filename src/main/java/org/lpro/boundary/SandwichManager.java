@@ -27,10 +27,28 @@ public class SandwichManager {
         return this.em.find(Sandwich.class, id);
     }
 
-    public List<Sandwich> findAll() {
+    public List<Sandwich> findAll(int numPage, int taillePage) {
         Query q = this.em.createNamedQuery("Sandwich.findAll", Sandwich.class);
         q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        q.setFirstResult((numPage-1) * taillePage);
+        q.setMaxResults(taillePage);
         return q.getResultList();
+    }
+    
+    public List<Sandwich> findWithParams(int i, String tp, int numPage, int taillePage){
+        String qry = "SELECT s FROM Sandwich s";
+        if(i == 1) qry += " WHERE s.img != 'null'";
+        if (tp != null) qry += " WHERE s.type_pain ='"+tp+"'";
+        if (i==1 && tp != null) qry += " WHERE s.type_pain ='"+tp+"' AND s.img != 'null'";
+        Query query = this.em.createQuery(qry);
+        
+        query.setFirstResult((numPage-1) * taillePage);
+        query.setMaxResults(taillePage);
+        
+        Query nbElementsQuery = em.createQuery("SELECT count(s.id)from Sandwich s");
+        int numDernierePage = (int)((numPage/taillePage)+1);
+        
+        return query.getResultList();
     }
 
     public Sandwich save(Sandwich s) {
@@ -44,24 +62,6 @@ public class SandwichManager {
         } catch (EntityNotFoundException enfe) {
             // rien à faire   
         }
-    }
-    
-    public List<Sandwich> findByImg(String i) {     
-        Query q = this.em.createQuery("SELECT s FROM Sandwich s WHERE s.img = :i");
-        q.setParameter("i", i);
-        return q.getResultList();
-    }
-    
-    public List<Sandwich> findByTypePain(String tp) {
-        Query q = this.em.createQuery("SELECT s FROM Sandwich s WHERE s.type_pain = :tp");
-        q.setParameter("tp", tp);
-        return q.getResultList();
-    }
-    
-    public List<Sandwich> findByTypePainImg(String i, String tp) {
-        Query query = this.em.createQuery("SELECT s FROM Sandwich s WHERE s.type_pain = :tp AND s.img != ''");
-        query.setParameter("tp", tp);
-        return query.getResultList();
     }
 
     Query createQuery(String select_s_FROM_Sandwich_stype_pain__type) {
