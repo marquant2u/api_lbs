@@ -32,6 +32,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.lpro.entity.Categorie;
 import org.lpro.entity.Sandwich;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
  *
@@ -48,6 +50,11 @@ public class SandwichRessource {
     
     /**
     @GET
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404 message = "Not Found"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 500, message = "Internal server error")})
     public Response getSandwichs() {
 //        JsonObject json = Json.createObjectBuilder()
 //                .add("type", "collection")
@@ -60,6 +67,10 @@ public class SandwichRessource {
     } */
     
     @GET
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404 message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal server error")})
     public Response getSandwichs(
             @QueryParam("t") String ptype,
             @DefaultValue("0") @QueryParam("img") String img,
@@ -85,6 +96,10 @@ public class SandwichRessource {
     
     @GET
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404 message = "Not Found"),
+        @ApiResponse(code = 500, message = "Internal server error")})
     public Response getOneSandwich(@PathParam("id") long id, @Context UriInfo uriInfo) {
         return Optional.ofNullable(sm.findById(id))
                 //.map(c -> Response.ok(categorie2Json(c)).build())
@@ -95,6 +110,10 @@ public class SandwichRessource {
     
     
     @POST
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 401 message = "Forbidden"),
+        @ApiResponse(code = 500, message = "Internal server error")})
     public Response newSandwich(@Valid Sandwich s, @Context UriInfo uriInfo) {
         Sandwich newOne = this.sm.save(s);
         long id = newOne.getId();
@@ -104,12 +123,20 @@ public class SandwichRessource {
             
     @DELETE
     @Path("{id}")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 401 message = "Forbidden"),
+        @ApiResponse(code = 500, message = "Internal server error")})
     public Response suppression(@PathParam("id") long id) {
         this.sm.delete(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     
     @PUT
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 401 message = "Forbidden"),
+        @ApiResponse(code = 500, message = "Internal server error")})
     @Path("{id}")
     public Sandwich update(@PathParam("id") long id, Sandwich s) {
         s.setId(id);
